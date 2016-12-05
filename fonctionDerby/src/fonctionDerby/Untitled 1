@@ -1,0 +1,33 @@
+CALL SQLJ.install_jar('/home/invite/Bureau/karim/fonctionderby.jar','APP.fonctionderby', 0);
+
+CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.classpath', 'APP.fonctionderby');
+
+create function fctChange(float_value float)
+ returns float
+ language java parameter style java
+ no sql
+ external name 'fonctionDerby.FonctionChange.change';
+
+CREATE TABLE PRODUIT (IDPROD INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, DESIGNATION VARCHAR (64) UNIQUE NOT NULL, PRIX FLOAT NOT NULL CHECK(PRIX>0));
+CREATE TABLE DEVISE (IDDEVISE INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, NOM VARCHAR (16) UNIQUE NOT NULL, TAUX FLOAT NOT NULL CHECK(TAUX>0));
+
+SELECT IDPROD, DESIGNATION, PRIX, fctChange(PRIX) FROM PRODUIT;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CALL SQLJ.install_jar('/home/invite/Bureau/karim/fonctionderby.jar','APP.fonctionderby', 0);
+
+CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.classpath', 'APP.fonctionderby');
+
+create function fctChangeD(float_value float, varchar_value varchar(16))
+returns float
+language java parameter style java READS SQL DATA
+external name'derby2.FonctionchangeD.changeD'
+
+CREATE TABLE PRODUIT (IDPROD INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, DESIGNATION VARCHAR (64) UNIQUE NOT NULL, PRIX FLOAT NOT NULL CHECK(PRIX>0));
+CREATE TABLE DEVISE (IDDEVISE INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, NOM VARCHAR (16) UNIQUE NOT NULL, TAUX FLOAT NOT NULL CHECK(TAUX>0));
+
+INSERT INTO PRODUIT (DESIGNATION, PRIX) VALUES ('DOKKAN', 33.99)
+INSERT INTO DEVISE (NOM, TAUX) VALUES ('dollar', 1.30)
+
+SELECT IDPROD, fctChangeD(PRIX, 'dollar') FROM PRODUIT;
